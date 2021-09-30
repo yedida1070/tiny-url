@@ -64,7 +64,7 @@ public class AppController {
             }
             i++;
         }
-        return "localhost:8080/" + tinyUrl + "/";
+        return "https://tiny-yema.herokuapp.com/" + tinyUrl + "/";
     }
 
     @RequestMapping(value = "/{tiny}/", method = RequestMethod.GET)
