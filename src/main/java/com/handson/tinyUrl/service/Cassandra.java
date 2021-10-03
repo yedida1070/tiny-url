@@ -51,6 +51,7 @@ public class Cassandra {
         return  cassandraSession.execute(
                         selectFrom(USER_CLICKS_TABLE).all()
                                 .whereColumn(NAME_COLUMN).isEqualTo(literal(userId))
+                                .allowFiltering()
                                 .build())
                 .all().stream().map(row -> UserClicks.parse(row))
                 .collect(Collectors.toList());

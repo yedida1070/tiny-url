@@ -3,10 +3,15 @@ package com.handson.tinyUrl.entities;
 
 import com.datastax.oss.driver.api.core.cql.Row;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
 public class UserClicks {
+    static DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
     private String name;
     private Date time;
     private String tiny;
@@ -60,26 +65,32 @@ public class UserClicks {
     }
 
     private static String extractName(String[] columns) {
-        return trimQuotes(extractValue(columns, "name"));
+        return trimQuotes(extractValue(columns, "user_name"));
     }
 
     private static Date extractTime(String[] columns) {
-        return new Date(Long.valueOf(trimQuotes(extractValue(columns, "time"))));
+        String noZone = trimQuotes(extractValue(columns, "click_time"));
+        noZone = noZone.substring(noZone.indexOf('+')+1);
+        try {
+            return df1.parse(noZone);
+        }catch (Exception e) {
+            return new Date();
+        }
     }
 
     private static String extractTiny(String[] columns) {
-        return extractValue(columns, "tiny");
+        return extractValue(columns, "click_tiny");
     }
 
     private static String extractUrl(String[] columns) {
-        return trimQuotes(extractValue(columns, "url"));
+        return trimQuotes(extractValue(columns, "click_url"));
     }
 
     private static String extractValue(String[] columns, String key){
         String result = null;
         for (String column : columns) {
             if (column.contains(key)) {
-                result = column.split(":")[1].trim();
+                result = column.substring(column.indexOf(":") +1);// split(":")[1].trim();
                 break;
             }
         }
